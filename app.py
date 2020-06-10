@@ -116,7 +116,7 @@ app.layout = html.Div(children=[
                  html.Div(className='nine columns div-user-controls',
                           children=[
                               html.H2('Net Loss Ratios of General Insurers in Singapore'),
-                              html.P('''Data source: MAS Insurer Returns - Form 6'''),
+                              html.P('''Net Loss Ratio = Net Claims Settled / Net Written Premium'''),
                               dcc.Graph(id='lossratio', config={'displayModeBar': False}),
                           ]
                           ),  # Define the left element
