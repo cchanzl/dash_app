@@ -154,7 +154,7 @@ def update_lossratio(lobselector, insurerselector):
                   paper_bgcolor='rgba(0, 0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0, 0)',
                   hovermode='closest',
-                  height=600,
+                  height=400,
                   autosize=True,
                   # title={'text': 'Net Loss Ratio', 'font': {'color': 'black'}, 'x': 0.5},
                   yaxis=dict(
