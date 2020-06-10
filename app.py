@@ -10,20 +10,103 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([
-    html.H2('Hello World'),
-    dcc.Dropdown(
-        id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
-        value='LA'
-    ),
-    html.Div(id='display-value')
+app.layout = html.Div(children=[
+    html.Div(className='row',  # Define the row element
+             children=[
+                 html.Div(className='four columns div-user-controls',
+                          children=[
+                              html.H2('General Insurers in Singapore'),
+                              html.P('''Visualising MAS Form 6'''),
+                              html.P('''Pick one or more insurer below.'''),
+                              html.Div(className='div-for-dropdown',
+                                       children=[
+                                           dcc.Dropdown(id='stockselector',
+                                                        options=get_options(df['stock'].unique()),
+                                                        multi=True,
+                                                        value=[df['stock'].sort_values()[0]],
+                                                        style={'backgroundColor': '#1E1E1E'},
+                                                        className='stockselector')
+                                       ],
+                                       style={'color': '#1E1E1E'})
+                          ]
+                          ),  # Define the left element
+                 html.Div(className='eight columns div-for-charts bg-grey',
+                          children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}),
+                                    dcc.Graph(id='change', config={'displayModeBar': False})]
+                          )  # Define the right element
+             ]
+             )
 ])
 
-@app.callback(dash.dependencies.Output('display-value', 'children'),
-              [dash.dependencies.Input('dropdown', 'value')])
-def display_value(value):
-    return 'You have selected "{}"'.format(value)
+
+@app.callback(Output('timeseries', 'figure'),
+              [Input('stockselector', 'value')])
+def update_timeseries(selected_dropdown_value):
+    ''' Draw traces of the feature 'value' based one the currently selected stocks '''
+    # STEP 1
+    trace = []
+    df_sub = df
+    # STEP 2
+    # Draw and append traces for each stock
+    for stock in selected_dropdown_value:
+        trace.append(go.Scatter(x=df_sub[df_sub['stock'] == stock].index,
+                                y=df_sub[df_sub['stock'] == stock]['value'],
+                                mode='lines',
+                                opacity=0.7,
+                                name=stock,
+                                textposition='bottom center'))
+    # STEP 3
+    traces = [trace]
+    data = [val for sublist in traces for val in sublist]
+    # Define Figure
+    # STEP 4
+    figure = {'data': data,
+              'layout': go.Layout(
+                  paper_bgcolor='rgba(0, 0, 0, 0)',
+                  plot_bgcolor='rgba(0, 0, 0, 0)',
+                  margin={'b': 15},
+                  hovermode='x',
+                  autosize=True,
+                  title={'text': 'Stock Prices', 'font': {'color': 'black'}, 'x': 0.5},
+                  xaxis={'range': [df_sub.index.min(), df_sub.index.max()]},
+              ),
+
+              }
+
+    return figure
+
+
+@app.callback(Output('change', 'figure'),
+              [Input('stockselector', 'value')])
+def update_change(selected_dropdown_value):
+    ''' Draw traces of the feature 'change' based one the currently selected stocks '''
+    trace = []
+    df_sub = df
+    # Draw and append traces for each stock
+    for stock in selected_dropdown_value:
+        trace.append(go.Scatter(x=df_sub[df_sub['stock'] == stock].index,
+                                y=df_sub[df_sub['stock'] == stock]['change'],
+                                mode='lines',
+                                opacity=0.7,
+                                name=stock,
+                                textposition='bottom center'))
+    traces = [trace]
+    data = [val for sublist in traces for val in sublist]
+    # Define Figure
+    figure = {'data': data,
+              'layout': go.Layout(
+                  paper_bgcolor='rgba(0, 0, 0, 0)',
+                  plot_bgcolor='rgba(0, 0, 0, 0)',
+                  margin={'t': 50},
+                  height=250,
+                  hovermode='x',
+                  autosize=True,
+                  title={'text': 'Daily Change', 'font': {'color': 'black'}, 'x': 0.5},
+                  xaxis={'showticklabels': False, 'range': [df_sub.index.min(), df_sub.index.max()]},
+              ),
+              }
+
+    return figure
 
 if __name__ == '__main__':
     app.run_server(debug=True)
