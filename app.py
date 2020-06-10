@@ -1,14 +1,32 @@
+# https://www.statworx.com/at/blog/how-to-build-a-dashboard-in-python-plotly-dash-step-by-step-tutorial/
+# https://dash.plotly.com/deployment
 import os
-
+import plotly.graph_objects as go
+import pandas as pd
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+# Load data
+df = pd.read_csv('data/stockdata2.csv', index_col=0, parse_dates=True)
+df.index = pd.to_datetime(df['Date'])
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
+
+
+# Creates a list of dictionaries, which have the keys 'label' and 'value'.
+def get_options(list_stocks):
+    dict_list = []
+    for i in list_stocks:
+        dict_list.append({'label': i, 'value': i})
+
+    return dict_list
+
 
 app.layout = html.Div(children=[
     html.Div(className='row',  # Define the row element
@@ -107,6 +125,7 @@ def update_change(selected_dropdown_value):
               }
 
     return figure
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
