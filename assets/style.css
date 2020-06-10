@@ -470,7 +470,8 @@ a {
 /* Graph Control Objects ––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .div-user-controls {
   padding-left: 55px;
-  padding-top: 64px;
+  padding-top: 5px;
+  padding-bottom: 12px;
 }
 .div-for-dropdown {
   padding-top: 12px;
@@ -478,9 +479,9 @@ a {
   padding-bottom: 12px;
 }
 .div-for-checklist {
-  padding-top: 12px;
+  padding-top: 0px;
   font-family: "Arial";
-  padding-bottom: 12px;
+  padding-bottom: 1px;
 }
 .div-for-slider {
   width: 97%;
