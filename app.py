@@ -47,12 +47,12 @@ df2 = df2.replace(dict.fromkeys(["SHC CAPITAL LIMITED",
                                  "ERGO INSURANCE PTE. LTD."], "ERGO"))
 df2 = df2.replace(dict.fromkeys(["AXA INSURANCE SINGAPORE PTE LTD",
                                  "AXA INSURANCE PTE LTD",
-                                 "RED SWITCH PTE LTD"], "AXA"))
+                                 "RED SWITCH PTE LTD"], "AXA Singapore"))
 df2.drop_duplicates(subset=('year', 'Row No.', 'insurer_name'), inplace=True, keep=False)  # remove multiple headers
 df2[header] = df2[header].astype(str).astype(float)  # convert string to float
 df2.reset_index(drop=True, inplace=True)
 df2.to_csv(r'test.txt', sep='|')
-unique = df2.insurer_name.unique()
+unique = sorted(list(df2.insurer_name.unique()))
 years = df2.year.unique()
 
 
@@ -66,12 +66,22 @@ def get_options(list_lob):
 
 
 app.layout = html.Div(children=[
-    html.Div(className='row',  # Define the row element
+    html.Div(className='row',  # row 1
+             children=[
+                 html.Div(className='nine columns div-user-controls',
+                          children=[
+                              html.H2('Net Loss Ratios of General Insurers in Singapore'),
+                              html.P('''Data source: MAS Insurer Returns - Form 6''')
+                                   ]
+                          ),
+                      ]
+             ),
+
+
+    html.Div(className='row',  # row 2 of checkboxes
              children=[
                  html.Div(className='three columns div-user-controls',
                           children=[
-                              html.H2('Net Loss Ratios of General Insurers in Singapore'),
-                              html.P('''Data source: MAS Form 6'''),
                               html.P('''Pick one or more lines of business below.'''),
                               html.Div(className='div-for-checklist',
                                        children=[
@@ -79,32 +89,57 @@ app.layout = html.Div(children=[
                                                     id='lobselector',
                                                     options=get_options(header[1:]),
                                                     value=[header[1:][0]],
-                                                    className='lobselector'
+                                                    className='lobselector',
+                                                    labelStyle={'display': 'block'}
                                                 ),
                                        ],
-                                       style={'color': '#1E1E1E'})
+                                       style={'color': '#1E1E1E'}),
+                                   ]
+                          ),
+                 html.Div(className='three columns div-user-controls',
+                          children=[
+                              html.P('''Pick one or more insurers below.'''),
+                              html.Div(className='div-for-checklist',
+                                       children=[
+                                            dcc.Checklist(
+                                                    id='insurerselector',
+                                                    options=get_options(unique),
+                                                    value=[unique[0]],
+                                                    className='insurerselector',
+                                                    labelStyle={'display': 'block'}
+                                                ),
+                                       ],
+                                       style={'color': '#1E1E1E'}),
+                                   ]
+                          )
+                      ]
+             ),
+
+
+    html.Div(className='row',  # Define the row element
+             children=[
+                 html.Div(className='nine columns div-user-controls',
+                          children=[
+                          dcc.Graph(id='lossratio', config={'displayModeBar': False}),
                           ]
                           ),  # Define the left element
-                 html.Div(className='nine columns div-for-charts bg-grey',
-                          children=[dcc.Graph(id='lossratio', config={'displayModeBar': False})]
-                          )  # Define the right element
              ]
              )
 ])
 
 
 @app.callback(Output('lossratio', 'figure'),
-              [Input('lobselector', 'value')])
-def update_lossratio(selected_dropdown_value):
-    ''' Draw traces of the feature 'value' based one the currently selected stocks '''
+              [Input('lobselector', 'value'),
+               Input('insurerselector', 'value')])
+def update_lossratio(lobselector, insurerselector):
     # STEP 1
     trace = []
     # STEP 2
     # Draw and append traces for each stock
-    for lob in selected_dropdown_value:
+    for lob in lobselector:
         df_nlr = df2[['year', 'insurer_name', 'Description', lob]]
         df_nlr = df_nlr[df_nlr.Description == 'Net Loss Ratio']
-        for i in unique:
+        for i in insurerselector:
             df_nlr_i = df_nlr[df_nlr.insurer_name == i]
             trace.append(go.Scatter(x=df_nlr_i['year'].tolist(),
                                     y=df_nlr_i[lob].tolist(),
@@ -121,7 +156,7 @@ def update_lossratio(selected_dropdown_value):
                   paper_bgcolor='rgba(0, 0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0, 0)',
                   hovermode='closest',
-                  height=700,
+                  height=600,
                   autosize=True,
                   # title={'text': 'Net Loss Ratio', 'font': {'color': 'black'}, 'x': 0.5},
                   yaxis=dict(
