@@ -57,9 +57,9 @@ years = df2.year.unique()
 
 
 # Creates a list of dictionaries, which have the keys 'label' and 'value'.
-def get_options(list_stocks):
+def get_options(list_lob):
     dict_list = []
-    for i in list_stocks:
+    for i in list_lob:
         dict_list.append({'label': i, 'value': i})
 
     return dict_list
@@ -70,17 +70,17 @@ app.layout = html.Div(children=[
              children=[
                  html.Div(className='three columns div-user-controls',
                           children=[
-                              html.H2('General Insurers in Singapore'),
-                              html.P('''Visualising MAS Form 6'''),
-                              html.P('''Pick one or more insurer below.'''),
-                              html.Div(className='div-for-dropdown',
+                              html.H2('Net Loss Ratios of General Insurers in Singapore'),
+                              html.P('''Data source: MAS Form 6'''),
+                              html.P('''Pick one or more lines of business below.'''),
+                              html.Div(className='div-for-checklist',
                                        children=[
-                                           dcc.Dropdown(id='lobselector',
-                                                        options=get_options(header[1:]),
-                                                        multi=True,
-                                                        value=[header[1:][0]],
-                                                        style={'backgroundColor': '#ffffff'},
-                                                        className='lobselector')
+                                            dcc.Checklist(
+                                                    id='lobselector',
+                                                    options=get_options(header[1:]),
+                                                    value=[header[1:][0]],
+                                                    className='lobselector'
+                                                ),
                                        ],
                                        style={'color': '#1E1E1E'})
                           ]
@@ -109,7 +109,8 @@ def update_lossratio(selected_dropdown_value):
             trace.append(go.Scatter(x=df_nlr_i['year'].tolist(),
                                     y=df_nlr_i[lob].tolist(),
                                     opacity=0.7,
-                                    name=i,
+                                    name=i + " - " + lob,
+                                    legendgroup=i,
                                     textposition='bottom center'))
     # STEP 3
     traces = [trace]
@@ -119,48 +120,29 @@ def update_lossratio(selected_dropdown_value):
               'layout': go.Layout(
                   paper_bgcolor='rgba(0, 0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0, 0)',
-                  hovermode='x',
+                  hovermode='closest',
                   height=700,
                   autosize=True,
-                  title={'text': 'Net Loss Ratio', 'font': {'color': 'black'}, 'x': 0.5},
-                  yaxis={'range': [0, 1.6]},
+                  # title={'text': 'Net Loss Ratio', 'font': {'color': 'black'}, 'x': 0.5},
+                  yaxis=dict(
+                      title='Net Loss Ratio (%)',
+                      tickformat=".0%",
+                      titlefont=dict(
+                          family='Arial',
+                          size=18,
+                          color='lightgrey')
                   ),
+                  xaxis=dict(
+                      title='Reporting Year',
+                      titlefont=dict(
+                          family='Arial',
+                          size=18,
+                          color='lightgrey')
+                  ),
+              ),
               }
 
     return figure
-
-
-# @app.callback(Output('change', 'figure'),
-#               [Input('lobselector', 'value')])
-# def update_change(selected_dropdown_value):
-#     ''' Draw traces of the feature 'change' based one the currently selected stocks '''
-#     trace = []
-#     df_sub = df
-#     # Draw and append traces for each stock
-#     for stock in selected_dropdown_value:
-#         trace.append(go.Scatter(x=df_sub[df_sub['stock'] == stock].index,
-#                                 y=df_sub[df_sub['stock'] == stock]['change'],
-#                                 mode='lines',
-#                                 opacity=0.7,
-#                                 name=stock,
-#                                 textposition='bottom center'))
-#     traces = [trace]
-#     data = [val for sublist in traces for val in sublist]
-#     # Define Figure
-#     figure = {'data': data,
-#               'layout': go.Layout(
-#                   paper_bgcolor='rgba(0, 0, 0, 0)',
-#                   plot_bgcolor='rgba(0, 0, 0, 0)',
-#                   margin={'t': 50},
-#                   height=250,
-#                   hovermode='x',
-#                   autosize=True,
-#                   title={'text': 'Daily Change', 'font': {'color': 'black'}, 'x': 0.5},
-#                   xaxis={'showticklabels': False, 'range': [df_sub.index.min(), df_sub.index.max()]},
-#               ),
-#               }
-#
-#     return figure
 
 
 if __name__ == '__main__':

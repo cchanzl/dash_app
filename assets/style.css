@@ -474,6 +474,12 @@ a {
 }
 .div-for-dropdown {
   padding-top: 12px;
+  font-family: "Arial";
+  padding-bottom: 12px;
+}
+.div-for-checklist {
+  padding-top: 12px;
+  font-family: "Arial";
   padding-bottom: 12px;
 }
 .div-for-slider {
