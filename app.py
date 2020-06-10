@@ -8,7 +8,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-
 # Load data
 df = pd.read_csv('data/stockdata2.csv', index_col=0, parse_dates=True)
 df.index = pd.to_datetime(df['Date'])
@@ -17,6 +16,44 @@ app = dash.Dash(__name__)
 
 server = app.server
 
+# use pandas dataframe
+filename = "Form6.txt"
+df2 = pd.read_table(filename, delimiter=r"|")
+
+# create header and row list
+header = []
+with open(file="header.txt") as myFile4:
+    for num, line in enumerate(myFile4, 1):
+        x = line.rstrip()
+        header.append(x)
+
+row = []
+with open(file="row.txt") as myFile5:
+    for num, line in enumerate(myFile5, 1):
+        x = line.rstrip()
+        row.append(x)
+
+# clean up data
+df2 = df2.replace("MSIG INSURANCE (SINGAPORE) PTE. LTD.", "MSIG")
+df2 = df2.replace("NTUC INCOME INSURANCE CO-OPERATIVE LIMITED", "NTUC Income")
+df2 = df2.replace(dict.fromkeys(["FIRST CAPITAL INSURANCE LTD",
+                               "MS FIRST CAPITAL INSURANCE LIMITED"], "MS First Capital"))
+df2 = df2.replace("ZURICH INSURANCE COMPANY LTD (SINGAPORE BRANCH)", "Zurich")
+df2 = df2.replace(dict.fromkeys(["AMERICAN HOME ASSURANCE CO",
+                               "CHARTIS SINGAPORE INSURANCE PTE. LTD.",
+                               "AIG ASIA PACIFIC INSURANCE PTE. LTD."], "AIG"))
+df2 = df2.replace(dict.fromkeys(["SHC CAPITAL LIMITED",
+                               "SHC INSURANCE PTE. LTD.",
+                               "ERGO INSURANCE PTE. LTD."], "ERGO"))
+df2 = df2.replace(dict.fromkeys(["AXA INSURANCE SINGAPORE PTE LTD",
+                               "AXA INSURANCE PTE LTD",
+                               "RED SWITCH PTE LTD"], "AXA"))
+df2.drop_duplicates(subset=('year', 'Row No.', 'insurer_name'), inplace=True, keep=False)  # remove multiple headers
+df2[header] = df2[header].astype(str).astype(float)  # convert string to float
+df2.reset_index(drop=True, inplace=True)
+df2.to_csv(r'test.txt', sep='|')
+unique = df2.insurer_name.unique()
+years = df2.year.unique()
 
 # Creates a list of dictionaries, which have the keys 'label' and 'value'.
 def get_options(list_stocks):
@@ -41,7 +78,7 @@ app.layout = html.Div(children=[
                                                         options=get_options(df['stock'].unique()),
                                                         multi=True,
                                                         value=[df['stock'].sort_values()[0]],
-                                                        style={'backgroundColor': '#1E1E1E'},
+                                                        style={'backgroundColor': '#ffffff'},
                                                         className='stockselector')
                                        ],
                                        style={'color': '#1E1E1E'})

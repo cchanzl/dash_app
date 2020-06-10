@@ -1,0 +1,36 @@
+GWP - Direct business
+GWP - RI accepted in Singapore
+GWP - RI accepted from other ASEAN countries
+GWP - RI accepted from other countries
+GWP - Total (2 to 4)
+RI ceded - In Singapore
+RI ceded - To other ASEAN countries
+RI ceded - To other countries
+RI ceded - Total (6 to 8)
+Net premiums written
+Premium liabilities at beginning of period
+Premium liabilities at end of period
+Premiums earned during the period
+Gross claims settled - Direct business
+Gross claims settled - RI accepted in Singapore
+Gross claims settled - RI accepted from other ASEAN countries
+Gross claims settled - RI accepted from other countries
+Gross claims settled - Total (15 to 17)
+Gross claims settled - RI recoveries from business ceded in Singapore
+Gross claims settled - RI recoveries from business ceded to other ASEAN countries
+Gross claims settled - RI recoveries from business ceded to other countries
+Gross claims settled - Total (19 to 21)
+Net claims settled
+Claims liabilities at end of period
+Claims liabilities at beginning of period
+Net claims incurred
+Management Expenses
+Commissions
+Reinsurance commissions
+Net commissions incurred
+Other distribution expenses
+Underwriting gain / (loss)
+F. NET INVESTMENT INCOME
+G. OPERATING RESULT
+Net Loss Ratio
+Movement in Net Claims Liabilities
