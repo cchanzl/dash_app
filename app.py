@@ -8,13 +8,12 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # Load data
 df = pd.read_csv('data/stockdata2.csv', index_col=0, parse_dates=True)
 df.index = pd.to_datetime(df['Date'])
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__)
 
 server = app.server
 
