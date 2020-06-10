@@ -75,40 +75,41 @@ app.layout = html.Div(children=[
                               html.P('''Pick one or more insurer below.'''),
                               html.Div(className='div-for-dropdown',
                                        children=[
-                                           dcc.Dropdown(id='insurerselector',
-                                                        options=get_options(df2['insurer_name'].unique()),
+                                           dcc.Dropdown(id='lobselector',
+                                                        options=get_options(header[1:]),
                                                         multi=True,
-                                                        value=[df2['insurer_name'].sort_values()[0]],
+                                                        value=[header[1:][0]],
                                                         style={'backgroundColor': '#ffffff'},
-                                                        className='insurerselector')
+                                                        className='lobselector')
                                        ],
                                        style={'color': '#1E1E1E'})
                           ]
                           ),  # Define the left element
                  html.Div(className='nine columns div-for-charts bg-grey',
-                          children=[dcc.Graph(id='timeseries', config={'displayModeBar': False})]
+                          children=[dcc.Graph(id='lossratio', config={'displayModeBar': False})]
                           )  # Define the right element
              ]
              )
 ])
 
 
-@app.callback(Output('timeseries', 'figure'),
-              [Input('insurerselector', 'value')])
-def update_timeseries(selected_dropdown_value):
+@app.callback(Output('lossratio', 'figure'),
+              [Input('lobselector', 'value')])
+def update_lossratio(selected_dropdown_value):
     ''' Draw traces of the feature 'value' based one the currently selected stocks '''
     # STEP 1
     trace = []
     # STEP 2
     # Draw and append traces for each stock
-    for insurer in selected_dropdown_value:
-        df_nlr = df2[(df2.insurer_name == insurer) & (df2.Description == "Net Loss Ratio")]
-        for i in header[1:]:
-            trace.append(go.Scatter(x=df_nlr['year'].tolist(),
-                                    y=df_nlr[i].tolist(),
+    for lob in selected_dropdown_value:
+        df_nlr = df2[['year', 'insurer_name', 'Description', lob]]
+        df_nlr = df_nlr[df_nlr.Description == 'Net Loss Ratio']
+        for i in unique:
+            df_nlr_i = df_nlr[df_nlr.insurer_name == i]
+            trace.append(go.Scatter(x=df_nlr_i['year'].tolist(),
+                                    y=df_nlr_i[lob].tolist(),
                                     opacity=0.7,
                                     name=i,
-                                    legendgroup=i,
                                     textposition='bottom center'))
     # STEP 3
     traces = [trace]
@@ -118,21 +119,19 @@ def update_timeseries(selected_dropdown_value):
               'layout': go.Layout(
                   paper_bgcolor='rgba(0, 0, 0, 0)',
                   plot_bgcolor='rgba(0, 0, 0, 0)',
-                  margin={'b': 15},
                   hovermode='x',
                   height=700,
                   autosize=True,
                   title={'text': 'Net Loss Ratio', 'font': {'color': 'black'}, 'x': 0.5},
                   yaxis={'range': [0, 1.6]},
-              ),
-
+                  ),
               }
 
     return figure
 
 
 # @app.callback(Output('change', 'figure'),
-#               [Input('insurerselector', 'value')])
+#               [Input('lobselector', 'value')])
 # def update_change(selected_dropdown_value):
 #     ''' Draw traces of the feature 'change' based one the currently selected stocks '''
 #     trace = []
