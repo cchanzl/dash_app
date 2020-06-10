@@ -72,55 +72,53 @@ app.layout = html.Div(children=[
                           children=[
                               html.H2('Net Loss Ratios of General Insurers in Singapore'),
                               html.P('''Data source: MAS Insurer Returns - Form 6''')
-                                   ]
+                          ]
                           ),
-                      ]
+             ]
              ),
-
 
     html.Div(className='row',  # row 2 of checkboxes
              children=[
-                 html.Div(className='three columns div-user-controls',
+                 html.Div(className='six columns div-user-controls',
                           children=[
                               html.P('''Pick one or more lines of business below.'''),
                               html.Div(className='div-for-checklist',
                                        children=[
-                                            dcc.Checklist(
-                                                    id='lobselector',
-                                                    options=get_options(header[1:]),
-                                                    value=[header[1:][0]],
-                                                    className='lobselector',
-                                                    labelStyle={'display': 'block'}
-                                                ),
+                                           dcc.Checklist(
+                                               id='lobselector',
+                                               options=get_options(header[1:]),
+                                               value=[header[1:][0]],
+                                               className='lobselector',
+                                               labelStyle={'display': 'block'}
+                                           ),
                                        ],
                                        style={'color': '#1E1E1E'}),
-                                   ]
+                          ]
                           ),
-                 html.Div(className='three columns div-user-controls',
+                 html.Div(className='six columns div-user-controls',
                           children=[
                               html.P('''Pick one or more insurers below.'''),
                               html.Div(className='div-for-checklist',
                                        children=[
-                                            dcc.Checklist(
-                                                    id='insurerselector',
-                                                    options=get_options(unique),
-                                                    value=[unique[0]],
-                                                    className='insurerselector',
-                                                    labelStyle={'display': 'block'}
-                                                ),
+                                           dcc.Checklist(
+                                               id='insurerselector',
+                                               options=get_options(unique),
+                                               value=[unique[0]],
+                                               className='insurerselector',
+                                               labelStyle={'display': 'block'}
+                                           ),
                                        ],
                                        style={'color': '#1E1E1E'}),
-                                   ]
+                          ]
                           )
-                      ]
+             ]
              ),
-
 
     html.Div(className='row',  # Define the row element
              children=[
                  html.Div(className='nine columns div-user-controls',
                           children=[
-                          dcc.Graph(id='lossratio', config={'displayModeBar': False}),
+                              dcc.Graph(id='lossratio', config={'displayModeBar': False}),
                           ]
                           ),  # Define the left element
              ]
