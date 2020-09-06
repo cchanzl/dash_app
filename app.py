@@ -382,7 +382,7 @@ def update_cor_box(lobselector):
                   autosize=True,
                   yaxis=dict(
                       range=[0, 2],
-                      title='Combined Oprating Ratio (%)',
+                      title='Net to Gross Ratio (%)',
                       tickformat=".0%",
                       titlefont=dict(
                           family='Arial',
